@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>투플랜 리뉴얼 — 임서한</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #fafafa; --bg-card: #fff;
+      --text-primary: #111; --text-secondary: #555; --text-muted: #999;
+      --border: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.18);
+      --tag-bg: #f1f1f1;
+      --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    nav { position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 2.5rem; background: rgba(250,250,250,0.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border); }
+    .nav-logo { font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-decoration: none; color: var(--text-primary); }
+    .nav-back { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--text-primary); }
+    .hero-banner { width: 100%; height: 400px; display: flex; align-items: flex-end; padding: 3rem; position: relative; overflow: hidden; }
+    .hero-banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%); }
+    .hero-banner-inner { position: relative; z-index: 1; }
+    .hero-tag { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .hero-title { font-size: clamp(26px,4vw,42px); font-weight: 500; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .hero-sub { font-size: 13px; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 2.5rem; }
+    .meta-bar { display: flex; gap: 2.5rem; padding: 2rem 0; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+    .meta-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 13px; font-weight: 500; }
+    .content-section { padding: 3.5rem 0; border-bottom: 0.5px solid var(--border); }
+    .section-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .section-heading { font-size: clamp(18px,2.5vw,24px); font-weight: 500; line-height: 1.3; letter-spacing: -0.015em; margin-bottom: 1.25rem; }
+    .section-heading .accent { color: var(--text-muted); }
+    .body-text { font-size: 14px; color: var(--text-secondary); line-height: 1.95; }
+    .body-text + .body-text { margin-top: 1rem; }
+    .outcome-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.5rem; }
+    .outcome-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; }
+    .outcome-num { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .outcome-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+    .process-list { display: flex; flex-direction: column; margin-top: 1.5rem; }
+    .process-item { display: grid; grid-template-columns: 120px 1fr; gap: 2rem; padding: 1.25rem 0; border-bottom: 0.5px solid var(--border); }
+    .process-item:first-child { border-top: 0.5px solid var(--border); }
+    .process-step { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding-top: 2px; }
+    .process-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.75; }
+    .process-desc strong { color: var(--text-primary); font-weight: 500; }
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; }
+    .insight-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .insight-text { font-size: 13px; color: var(--text-secondary); line-height: 1.75; }
+    .function-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .function-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; }
+    .function-name { font-size: 13px; font-weight: 500; margin-bottom: 0.5rem; }
+    .function-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+    .flow-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .flow-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+    .flow-card.after { border-color: #3A6BFF; }
+    .flow-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; }
+    .flow-label.blue { color: #3A6BFF; }
+    .flow-step { font-size: 13px; color: var(--text-secondary); padding: 0.6rem 0; border-bottom: 0.5px solid var(--border); }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-step.highlight { color: var(--text-primary); font-weight: 500; }
+    .tobe-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+    .tobe-item { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center; gap: 1rem; }
+    .tobe-box { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+    .tobe-box.after { border-color: #0AA4B4; color: var(--text-primary); }
+    .tobe-arrow { text-align: center; font-size: 16px; color: #0AA4B4; }
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.25rem; }
+    .tag { font-size: 12px; background: var(--tag-bg); color: var(--text-secondary); padding: 5px 12px; border-radius: 20px; }
+    .tag.dark { background: #111; color: #fff; }
+    .tag.blue { background: #EDF0FA; color: #3A6BFF; }
+    .tag.teal { background: #E8F5F4; color: #0AA4B4; }
+    .nav-projects { display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 0; }
+    .nav-proj-link { display: flex; flex-direction: column; gap: 4px; text-decoration: none; }
+    .nav-proj-dir { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; }
+    .nav-proj-name { font-size: 14px; font-weight: 500; color: var(--text-primary); transition: opacity 0.2s; }
+    .nav-proj-link:hover .nav-proj-name { opacity: 0.6; }
+    footer { text-align: center; padding: 2rem; font-size: 11px; color: var(--text-muted); border-top: 0.5px solid var(--border); }
+    /* ── GALLERY ── */
+    .gallery-section { padding: 3.5rem 0; border-bottom: 0.5px solid var(--border); }
+    .gallery-layout { display: grid; grid-template-columns: 220px 1fr; gap: 3rem; margin-top: 2rem; align-items: start; }
+    .gallery-list { position: sticky; top: 80px; }
+    .gallery-list-item { padding: 0.85rem 0; border-bottom: 0.5px solid var(--border); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 10px; user-select: none; }
+    .gallery-list-item:first-child { border-top: 0.5px solid var(--border); }
+    .gallery-list-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; transition: background 0.2s, transform 0.2s; }
+    .gallery-list-item.active { color: var(--text-primary); font-weight: 500; }
+    .gallery-list-item.active::before { background: var(--text-primary); transform: scale(1.4); }
+    .gallery-stack { display: flex; flex-direction: column; gap: 10px; }
+    .gallery-stack-item { border-radius: var(--radius-lg); overflow: hidden; background: var(--tag-bg); cursor: pointer; opacity: 0.35; transform: scale(0.97); transition: opacity 0.35s, transform 0.35s; position: relative; }
+    .gallery-stack-item.active { opacity: 1; transform: scale(1); }
+    .gallery-stack-item.near { opacity: 0.6; transform: scale(0.985); }
+    .gallery-stack-item img { width: 100%; display: block; }
+    .gallery-stack-item .img-cap { position: absolute; bottom: 0; left: 0; right: 0; padding: 0.75rem 1rem; font-size: 11px; color: rgba(255,255,255,0.85); background: linear-gradient(to top,rgba(0,0,0,0.5),transparent); opacity: 0; transition: opacity 0.2s; }
+    .gallery-stack-item.active .img-cap, .gallery-stack-item:hover .img-cap { opacity: 1; }
+    /* lightbox */
+    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 9999; align-items: center; justify-content: center; padding: 2rem; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: var(--radius-md); }
+    .lb-close { position: fixed; top: 1.5rem; right: 1.5rem; width: 36px; height: 36px; background: rgba(255,255,255,0.12); border: none; border-radius: 50%; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 22px; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .lb-prev { left: 1.5rem; } .lb-next { right: 1.5rem; }
+    .lb-count { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); font-size: 12px; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; }
+    @media(max-width:720px){
+      nav{padding:1rem 1.25rem;} .container{padding:0 1.25rem;}
+      .hero-banner{height:280px;padding:2rem 1.25rem;}
+      .outcome-grid,.insight-grid,.function-grid,.flow-compare{grid-template-columns:1fr;}
+      .process-item{grid-template-columns:1fr;gap:0.5rem;}
+      .tobe-item{grid-template-columns:1fr;} .tobe-arrow{transform:rotate(90deg);}
+      .gallery-layout{grid-template-columns:1fr;gap:1.5rem;}
+      .gallery-list{position:static;display:flex;flex-wrap:wrap;gap:6px;}
+      .gallery-list-item{padding:5px 12px;border:0.5px solid var(--border);border-radius:20px;font-size:11px;}
+      .gallery-list-item:first-child{border-top:0.5px solid var(--border);}
+    }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="../index.html">LIM SEOHAN</a>
+  <a class="nav-back" href="../index.html#projects">← 프로젝트 목록</a>
+</nav>
+<div class="hero-banner" style="background:#111;">
+  <div class="hero-banner-inner">
+    <p class="hero-tag" style="color:rgba(255,255,255,0.4);">Web · UXUI Renewal · 2026.01 – 02</p>
+    <h1 class="hero-title" style="color:#fff;">투플랜(2PLAN)<br>웹사이트 UXUI 리뉴얼</h1>
+    <p class="hero-sub" style="color:rgba(255,255,255,0.45);">브랜드의 유니크한 감성을 논리적인 UX로 풀어낸 디지털 플래그십 스토어</p>
+  </div>
+</div>
+<div class="container">
+  <div class="meta-bar">
+    <div><p class="meta-label">기간</p><p class="meta-value">2026.01.12 – 2026.02.06</p></div>
+    <div><p class="meta-label">서비스</p><p class="meta-value">Web / Desktop · Tablet · Mobile</p></div>
+    <div><p class="meta-label">유형</p><p class="meta-value">Team Project</p></div>
+    <div><p class="meta-label">기여도</p><p class="meta-value">리서치 · IA · 화면설계 · UI 각 90%</p></div>
+    <div><p class="meta-label">툴</p><p class="meta-value">Figma · Photoshop</p></div>
+  </div>
+
+  <div class="content-section">
+    <p class="section-eyebrow">Overview</p>
+    <h2 class="section-heading">파편화된 정보 구조를 정제하여<br><span class="accent">브랜드 아이덴티티와 사용성을 동시에 확보하다</span></h2>
+    <p class="body-text">기존 2PLAN의 파편화된 정보 구조와 과도한 시각 노이즈는 사용자에게 탐색 피로도를 유발하며, 구매 전 이탈의 주요 원인이 되고 있었습니다.</p>
+    <p class="body-text">사용자의 탐색 피로도를 낮추는 UI 구조를 설계하고, 스타일 큐레이션을 강화하여 사용자가 자신의 취향을 확신하며 구매까지 이어질 수 있는 논리적인 UX를 구축하는 데 집중했습니다.</p>
+    <div class="tag-row">
+      <span class="tag dark">만족도 1.77배 ↑</span>
+      <span class="tag">패션 이커머스</span>
+      <span class="tag">반응형 디자인 시스템</span>
+      <span class="tag">UT 기반 개선</span>
+    </div>
+  </div>
+
+  <div class="gallery-section" id="gallery_2plan">
+  <p class="section-eyebrow">작업 화면</p>
+  <div class="gallery-layout">
+    <div class="gallery-list"><div class="gallery-list-item active" onclick="G2plan.set(0)" id="gl_2plan_0">메인 페이지 — Before / After</div>
+<div class="gallery-list-item" onclick="G2plan.set(1)" id="gl_2plan_1">카테고리 & 네비게이션</div>
+<div class="gallery-list-item" onclick="G2plan.set(2)" id="gl_2plan_2">상품 리스트 페이지</div>
+<div class="gallery-list-item" onclick="G2plan.set(3)" id="gl_2plan_3">필터 UI 개선 과정</div>
+<div class="gallery-list-item" onclick="G2plan.set(4)" id="gl_2plan_4">상품 상세 페이지</div>
+<div class="gallery-list-item" onclick="G2plan.set(5)" id="gl_2plan_5">저널 페이지</div>
+</div>
+    <div class="gallery-stack"><div class="gallery-stack-item active" id="gs_2plan_0" onclick="G2plan.open(0)"><img src="https://letter-design.github.io/images/2plan/2plan_1.png" alt="메인 페이지 — Before / After" loading="lazy"/><span class="img-cap">메인 페이지 — Before / After</span><span class="zoom-hint">⤢</span></div>
+<div class="gallery-stack-item near" id="gs_2plan_1" onclick="G2plan.open(1)"><img src="https://letter-design.github.io/images/2plan/2plan_2.png" alt="카테고리 & 네비게이션" loading="lazy"/><span class="img-cap">카테고리 & 네비게이션</span><span class="zoom-hint">⤢</span></div>
+<div class="gallery-stack-item " id="gs_2plan_2" onclick="G2plan.open(2)"><img src="https://letter-design.github.io/images/2plan/2plan_3.png" alt="상품 리스트 페이지" loading="lazy"/><span class="img-cap">상품 리스트 페이지</span><span class="zoom-hint">⤢</span></div>
+<div class="gallery-stack-item " id="gs_2plan_3" onclick="G2plan.open(3)"><img src="https://letter-design.github.io/images/2plan/2plan_4.png" alt="필터 UI 개선 과정" loading="lazy"/><span class="img-cap">필터 UI 개선 과정</span><span class="zoom-hint">⤢</span></div>
+<div class="gallery-stack-item " id="gs_2plan_4" onclick="G2plan.open(4)"><img src="https://letter-design.github.io/images/2plan/2plan_5.png" alt="상품 상세 페이지" loading="lazy"/><span class="img-cap">상품 상세 페이지</span><span class="zoom-hint">⤢</span></div>
+<div class="gallery-stack-item " id="gs_2plan_5" onclick="G2plan.open(5)"><img src="https://letter-design.github.io/images/2plan/2plan_6.png" alt="저널 페이지" loading="lazy"/><span class="img-cap">저널 페이지</span><span class="zoom-hint">⤢</span></div>
+</div>
+  </div>
+</div>
+
+<div class="lightbox" id="lb_2plan">
+  <button class="lb-close" onclick="G2plan.close()">✕</button>
+  <button class="lb-nav lb-prev" onclick="G2plan.shift(-1)">&#8592;</button>
+  <div class="lb-img-wrap">
+    <img id="lb_2plan_img" src="" alt="" />
+  </div>
+  <button class="lb-nav lb-next" onclick="G2plan.shift(1)">&#8594;</button>
+  <div class="lb-meta">
+    <span class="lb-caption" id="lb_2plan_cap"></span>
+    <span class="lb-count" id="lb_2plan_cnt"></span>
+  </div>
+  <div class="lb-dots"><div class="lb-dot active" id="ld_2plan_0" onclick="G2plan.lbGo(0)"></div><div class="lb-dot " id="ld_2plan_1" onclick="G2plan.lbGo(1)"></div><div class="lb-dot " id="ld_2plan_2" onclick="G2plan.lbGo(2)"></div><div class="lb-dot " id="ld_2plan_3" onclick="G2plan.lbGo(3)"></div><div class="lb-dot " id="ld_2plan_4" onclick="G2plan.lbGo(4)"></div><div class="lb-dot " id="ld_2plan_5" onclick="G2plan.lbGo(5)"></div></div>
+</div>
+<script>
+var G2plan = (function(){
+  var imgs = ["https://letter-design.github.io/images/2plan/2plan_1.png","https://letter-design.github.io/images/2plan/2plan_2.png","https://letter-design.github.io/images/2plan/2plan_3.png","https://letter-design.github.io/images/2plan/2plan_4.png","https://letter-design.github.io/images/2plan/2plan_5.png","https://letter-design.github.io/images/2plan/2plan_6.png"];
+  var caps = ["메인 페이지 — Before / After","카테고리 & 네비게이션","상품 리스트 페이지","필터 UI 개선 과정","상품 상세 페이지","저널 페이지"];
+  var n    = 6;
+  var cur  = 0;
+  var lbOpen = false;
+
+  function setState(idx) {
+    cur = idx;
+    for (var i = 0; i < n; i++) {
+      var si = document.getElementById('gs_2plan_' + i);
+      var li = document.getElementById('gl_2plan_' + i);
+      var di = document.getElementById('ld_2plan_' + i);
+      si.className = 'gallery-stack-item ' + (i===idx ? 'active' : i===idx-1||i===idx+1 ? 'near' : '');
+      if(li) li.classList.toggle('active', i===idx);
+      if(di) di.classList.toggle('active', i===idx);
+    }
+    /* 라이트박스 열려있으면 동기화 */
+    if (lbOpen) {
+      document.getElementById('lb_2plan_img').src = imgs[idx];
+      document.getElementById('lb_2plan_cap').textContent = caps[idx];
+      document.getElementById('lb_2plan_cnt').textContent = (idx+1) + ' / ' + n;
+    }
+  }
+
+  function openLB(idx) {
+    setState(idx);
+    lbOpen = true;
+    var lb = document.getElementById('lb_2plan');
+    document.getElementById('lb_2plan_img').src = imgs[idx];
+    document.getElementById('lb_2plan_cap').textContent = caps[idx];
+    document.getElementById('lb_2plan_cnt').textContent = (idx+1) + ' / ' + n;
+    lb.classList.add('open');
+    document.addEventListener('keydown', _key);
+  }
+
+  function closeLB() {
+    lbOpen = false;
+    document.getElementById('lb_2plan').classList.remove('open');
+    document.removeEventListener('keydown', _key);
+  }
+
+  function shift(d) {
+    openLB((cur + d + n) % n);
+  }
+
+  function _key(e) {
+    if (e.key==='ArrowRight') shift(1);
+    else if (e.key==='ArrowLeft') shift(-1);
+    else if (e.key==='Escape') closeLB();
+  }
+
+  document.getElementById('lb_2plan').addEventListener('click', function(e){
+    if (e.target === this) closeLB();
+  });
+
+  return { set: setState, open: openLB, close: closeLB, lbGo: openLB, shift: shift };
+})();
+</script>
+
+  <div class="content-section">
+    <p class="section-eyebrow">주요 성과</p>
+    <div class="outcome-grid">
+      <div class="outcome-card"><p class="outcome-num">1.77×</p><p class="outcome-desc">기존 사이트 대비 사용자 만족도 약 1.77배 상승 (2차 UT 기준)</p></div>
+      <div class="outcome-card"><p class="outcome-num">반응형</p><p class="outcome-desc">1920px 기준 레이아웃 최적화로 다양한 디바이스 대응 확보</p></div>
+      <div class="outcome-card"><p class="outcome-num">이탈↓</p><p class="outcome-desc">주요 서비스 소개와 문의하기 버튼 배치 로직 개선으로 이탈률 감소 기여</p></div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <p class="section-eyebrow">Research</p>
+    <h2 class="section-heading">성숙기 패션 커머스 시장,<br><span class="accent">'취향의 개인화'가 구매 결정의 핵심이 되다</span></h2>
+    <p class="body-text">패션 이커머스 시장이 고도화됨에 따라 사용자들은 단순히 많은 상품을 보유한 쇼핑몰보다, 나의 체형과 스타일을 명확히 이해하고 제안해 주는 서비스를 선호하고 있습니다. 개인 취향·가격이 구매 결정의 86.8%를 차지하며, BX 중심 몰은 일반 몰 대비 최대 3배의 전환율을 기록합니다.</p>
+    <div class="insight-grid">
+      <div class="insight-card"><p class="insight-label">휴리스틱 평가 인사이트</p><p class="insight-text">네비게이션·햄버거 메뉴 가시성 부족, 검색 기능 사용성 이슈, 시각적 위계 불분명 → 정보 구조 재설계 + 핵심 기능 위치·위계 재정렬 필요</p></div>
+      <div class="insight-card"><p class="insight-label">심층 인터뷰 인사이트 (10명)</p><p class="insight-text">시각 노이즈 피로, 정보 과부하, 코디 매칭 어려움 → 직관성·신속성·정확성·BI 강화 4대 원칙 도출</p></div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <p class="section-eyebrow">Design Process</p>
+    <div class="process-list">
+      <div class="process-item"><span class="process-step">리서치</span><p class="process-desc"><strong>데스크 리서치 · 휴리스틱 평가 · 경쟁사 조사</strong> — NUAZE, AMOMENTO, JIL SANDER 등 하이엔드 SPA 브랜드 분석. BX 강화와 쇼핑 효율 유지 패턴 추출 후 가설 설정.</p></div>
+      <div class="process-item"><span class="process-step">설문·인터뷰</span><p class="process-desc"><strong>10명 심층 인터뷰 · 설문조사</strong> — 시각 피로, 정보 과부하, 코디 적용 어려움의 3가지 유형 도출. UI 디자인 4대 원칙 수립.</p></div>
+      <div class="process-item"><span class="process-step">IA · 와이어프레임</span><p class="process-desc"><strong>메뉴 재구성 · 와이어프레임</strong> — 실루엣 중심 미니멀 레이아웃으로 시각 인지 부하 최소화. 단순 나열에서 스타일 큐레이션 중심 탐색 구조로 전환.</p></div>
+      <div class="process-item"><span class="process-step">디자인 시스템</span><p class="process-desc"><strong>프리텐다드 폰트 · 블랙&화이트 팔레트</strong> — 모던하고 젠더리스한 브랜드 이미지를 위해 모노톤 컬러 팔레트 채택.</p></div>
+      <div class="process-item"><span class="process-step">1차 UT</span><p class="process-desc"><strong>가설 검증 → 정보 구조 정교화</strong> — 7명 대상 테스트. 메인 접근성·정보 제공량·리뷰 가시성 등 6가지 개선점 도출.</p></div>
+      <div class="process-item"><span class="process-step">2차 UT</span><p class="process-desc"><strong>탐색 편의성 및 사용자 확신 증대 검증</strong> — 10명 대상. 기존 대비 만족도 약 1.77배 상승 확인.</p></div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <p class="section-eyebrow">My Role</p>
+    <p class="body-text">리서치 — 데스크 리서치, 휴리스틱 평가, 경쟁사 조사, 설문조사, 심층 인터뷰, UT 전 과정 주도 (90%)</p>
+    <p class="body-text">IA 설계 — 메뉴 재구성, 와이어프레임 제작 (90%)</p>
+    <p class="body-text">UXUI — 디자인 시스템 정립, 핵심 화면 설계 및 디자인 (90%)</p>
+  </div>
+
+  <div class="nav-projects">
+    <div></div>
+    <a class="nav-proj-link" href="mregg.html" style="text-align:right;">
+      <span class="nav-proj-dir">다음 프로젝트 →</span>
+      <span class="nav-proj-name">Mr.EGG AI 에이전트 플랫폼</span>
+    </a>
+  </div>
+</div>
+<footer>© 2026 Lim Seohan. Designed &amp; built with care.</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="lbClose()">✕</button>
+  <button class="lb-nav lb-prev" onclick="lbShift(-1)">&#8592;</button>
+  <img id="lb-img" src="" alt="" />
+  <button class="lb-nav lb-next" onclick="lbShift(1)">&#8594;</button>
+  <p class="lb-count" id="lb-count"></p>
+</div>
+<script>
+var LB={imgs:[],idx:0};
+function lbOpen(imgs,idx){LB.imgs=imgs;LB.idx=idx;document.getElementById('lightbox').classList.add('open');lbUpdate();document.addEventListener('keydown',lbKey);}
+function lbClose(){document.getElementById('lightbox').classList.remove('open');document.removeEventListener('keydown',lbKey);}
+function lbShift(d){LB.idx=(LB.idx+d+LB.imgs.length)%LB.imgs.length;lbUpdate();}
+function lbUpdate(){document.getElementById('lb-img').src=LB.imgs[LB.idx];document.getElementById('lb-count').textContent=(LB.idx+1)+' / '+LB.imgs.length;}
+function lbKey(e){if(e.key==='ArrowRight')lbShift(1);else if(e.key==='ArrowLeft')lbShift(-1);else if(e.key==='Escape')lbClose();}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)lbClose();});
+</script>
+</body>
+</html>
