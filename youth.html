@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>청춘 — 임서한</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #f5f2ed;
+      cursor: none;
+    }
+
+    #canvas-wrap {
+      position: fixed;
+      inset: 0;
+      cursor: none;
+    }
+
+    #cc {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+
+    /* 좌측 하단 — 작가 크레딧 */
+    .credit {
+      position: fixed;
+      bottom: 2rem;
+      left: 2.5rem;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .credit-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(40,35,28,0.45);
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+    }
+
+    /* 우측 하단 — 홈으로 */
+    .nav-home {
+      position: fixed;
+      bottom: 2rem;
+      right: 2.5rem;
+      z-index: 10;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(40,35,28,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-home:hover { color: rgba(40,35,28,0.85); }
+
+    /* 커스텀 커서 */
+    #cur {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: rgba(40,35,28,0.55);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%,-50%);
+      z-index: 9999;
+      transition: width 0.15s, height 0.15s;
+    }
+    #cur-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 0.5px solid rgba(40,35,28,0.22);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%,-50%);
+      z-index: 9998;
+    }
+  </style>
+</head>
+<body>
+
+<div id="canvas-wrap">
+  <canvas id="cc"></canvas>
+</div>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<div class="credit">
+  <p class="credit-title">청춘 — 사무엘 울만</p>
+  <p class="credit-title">Samuel Ullman, Youth</p>
+</div>
+
+<a class="nav-home" href="index.html">← Portfolio</a>
+
+<script>
+(function(){
+  const canvas = document.getElementById('cc');
+  const ctx    = canvas.getContext('2d');
+  const cur    = document.getElementById('cur');
+  const ring   = document.getElementById('cur-ring');
+
+  const POEM = `청춘이란인생의어떤한시기가아니라마음가짐을뜻하나니장밋빛볼붉은입술부드러운무릎이아니라강인한의지풍부한상상력불타는열정을말한다청춘이란인생의깊은샘에서솟아나는신선함이다청춘이란두려움을물리치는용기안이함을뿌리치는모험심을의미하나니때로는스무살청년보다예순살노인에게청춘이있다나이를먹는다고해서누구나늙는것은아니다이상을잃어버릴때비로소늙는것이다`;
+
+  const FS      = 13;
+  const SEG_LEN = 20;
+  const GRAVITY = 0.36;
+  const DAMPING = 0.984;
+  const ITERS   = 14;
+  const MOUSE_R = 90;
+  const MOUSE_F = 7;
+
+  let W = 0, H = 0;
+  let strings = [];
+  let mouse  = {x:-999, y:-999};
+  let tgt    = {x:-999, y:-999};
+  let ringPos = {x:-999, y:-999};
+  let isIn   = false;
+
+  function makeString(anchorX, numNodes){
+    const nodes = [];
+    for(let i = 0; i < numNodes; i++){
+      nodes.push({
+        x: anchorX, y: i * SEG_LEN,
+        ox: anchorX, oy: i * SEG_LEN,
+        pinned: i === 0
+      });
+    }
+    return { nodes, anchorX };
+  }
+
+  function build(){
+    strings = [];
+    const numStrings = Math.ceil(W / SEG_LEN) + 1;
+    const numNodes   = Math.ceil(H / SEG_LEN) + 2;
+    for(let s = 0; s < numStrings; s++){
+      const ax = W - s * SEG_LEN - SEG_LEN * 0.5;
+      strings.push(makeString(ax, numNodes));
+    }
+  }
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    build();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // 마우스
+  document.addEventListener('mousemove', e => {
+    tgt.x = e.clientX; tgt.y = e.clientY;
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+    isIn = true;
+  });
+  document.addEventListener('mouseleave', () => { tgt.x=-999; tgt.y=-999; isIn=false; });
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function update(){
+    mouse.x = lerp(mouse.x, tgt.x, 0.1);
+    mouse.y = lerp(mouse.y, tgt.y, 0.1);
+
+    // 링 커서 따라가기
+    ringPos.x = lerp(ringPos.x, tgt.x, 0.08);
+    ringPos.y = lerp(ringPos.y, tgt.y, 0.08);
+    ring.style.left = ringPos.x + 'px';
+    ring.style.top  = ringPos.y + 'px';
+
+    for(const str of strings){
+      const nodes = str.nodes;
+
+      for(const n of nodes){
+        if(n.pinned){
+          n.x=str.anchorX; n.y=0; n.ox=n.x; n.oy=n.y;
+          continue;
+        }
+
+        const vx = (n.x - n.ox) * DAMPING;
+        const vy = (n.y - n.oy) * DAMPING;
+        n.ox = n.x; n.oy = n.y;
+        n.x += vx;
+        n.y += vy + GRAVITY;
+
+        // 마우스 밀어내기
+        if(isIn && mouse.x > 0){
+          const dx = n.x - mouse.x;
+          const dy = n.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if(dist < MOUSE_R && dist > 0.1){
+            const f = (1 - dist/MOUSE_R) * MOUSE_F;
+            const ang = Math.atan2(dy, dx);
+            n.x += Math.cos(ang) * f;
+            n.y += Math.sin(ang) * f;
+          }
+        }
+
+        // 경계
+        if(n.x < 0)    { n.x = 0;    n.ox = n.x + (n.ox-n.x)*0.5; }
+        if(n.x > W)    { n.x = W;    n.ox = n.x - (n.x-n.ox)*0.5; }
+        if(n.y > H+20) { n.y = H+20; }
+      }
+
+      // 거리 제약
+      for(let iter = 0; iter < ITERS; iter++){
+        for(let i = 0; i < nodes.length-1; i++){
+          const a = nodes[i], b = nodes[i+1];
+          const dx = b.x-a.x, dy = b.y-a.y;
+          const dist = Math.hypot(dx, dy);
+          if(dist === 0) continue;
+          const diff = (dist - SEG_LEN) / dist * 0.5;
+          const ox = dx*diff, oy = dy*diff;
+          if(!a.pinned){ a.x += ox; a.y += oy; }
+          if(!b.pinned){ b.x -= ox; b.y -= oy; }
+        }
+      }
+    }
+  }
+
+  let ci = 0;
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = `${FS}px 'Noto Serif KR', serif`;
+    ci = 0;
+
+    for(let si = 0; si < strings.length; si++){
+      const str = strings[si];
+      for(let ni = 0; ni < str.nodes.length; ni++){
+        const n = str.nodes[ni];
+        if(n.y < -10 || n.y > H+10){ ci++; continue; }
+
+        const next = str.nodes[ni+1];
+        let angle = 0;
+        if(next) angle = Math.atan2(next.y-n.y, next.x-n.x) - Math.PI/2;
+
+        const distBase = Math.hypot(n.x-str.anchorX, n.y-ni*SEG_LEN);
+        const alpha = Math.max(0.09, 0.68 - distBase*0.007);
+
+        ctx.save();
+        ctx.translate(n.x, n.y);
+        ctx.rotate(angle);
+        ctx.fillStyle = `rgba(40,35,28,${alpha})`;
+        ctx.fillText(POEM[ci % POEM.length], -FS/2, FS/2);
+        ctx.restore();
+        ci++;
+      }
+    }
+  }
+
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
+  loop();
+})();
+</script>
+</body>
+</html>
